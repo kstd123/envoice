@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="yonyou.einvoice.backmangesystem.companyManagement.dao.IAppregisterDAO">
+
+<!-- 根据id查询Appregister，返回appregisterResultMap -->
+  <select id="findById" parameterType="Integer"
+  	resultMap="appregisterResultMap">
+  	SELECT id,appid,corpid,signkey,signtype,invaliddate,maxnum,verifyclass,createtime,ts 
+  	FROM report_einvoice_auth.pub_appregister WHERE id=#{id};
+  </select>
+  
+<!-- 根据corpid上传证书，返回true -->
+  <update id="doUpdatePublicKeyBycorpid" parameterType="Appregister">
+     UPDATE report_einvoice_auth.pub_appregister SET publickey =#{publickey},signkey=#{signkey}
+     WHERE corpid=#{corpid}
+  </update>
+  
+<!-- 根据corpid查询Appregister，返回appregisterResultMap -->
+  <select id="findPublickeyById" parameterType="String" 
+  	resultMap="appregisterResultMap">
+  	SELECT id,appid FROM report_einvoice_auth.pub_appregister WHERE corpid=#{corpid};
+  </select>
+
+  <!-- 查询所有并分页显示，返回resultMap -->
+  <select id="findAllSplit" parameterType="java.util.Map" resultType="Appregister"
+  	resultMap="appregisterResultMap">
+  	SELECT id,appid,corpid,signkey,signtype,invaliddate,maxnum,verifyclass,createtime,ts
+  	FROM report_einvoice_auth.pub_appregister
+  	<where>
+  	   <if test="column !=null and keyWord !=null">
+  	      ${column} LIKE #{keyWord} AND
+  	   </if>
+  	</where>
+  	ORDER BY createtime DESC
+  	LIMIT #{start},#{lineSize};
+  </select>
+  
+  <!-- 查询所有记录数，返回Integer -->
+  <select id="getAllCount" parameterType="java.util.Map" resultType="Integer">
+		SELECT COUNT(*) FROM report_einvoice_auth.pub_appregister
+		<where>
+			<if test="column != null and keyWord != null">
+				${column} LIKE #{keyWord}
+			</if>
+		</where>
+  </select> 
+  
+  <!-- 映射Appregister对象的resultMap -->
+	<resultMap type="yonyou.einvoice.backmangesystem.companyManagement.vo.Appregister" id="appregisterResultMap">
+		<id property="id" column="id"/>
+		<result property="appid" column="appid"/>
+		<result property="corpid" column="corpid"/>
+		<result property="publickey" column="publickey"/>
+		<result property="signkey" column="signkey"/>
+		<result property="signtype" column="signtype"/>
+		<result property="invaliddate" column="invaliddate"/>
+		<result property="maxnum" column="maxnum"/>
+		<result property="verifyclass" column="verifyclass"/>
+		<result property="createtime" column="createtime"/>
+		<result property="ts" column="ts"/>
+	</resultMap>
+
+</mapper>

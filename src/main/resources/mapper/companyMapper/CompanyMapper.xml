@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指用户自定义的命名空间。 -->
+<mapper namespace="yonyou.einvoice.backmangesystem.companyManagement.dao.ICompanyDAO">
+
+   <!-- 批量授权，返回true -->
+   <update id="doUpdateBatch" parameterType="java.util.Map">
+        UPDATE report_einvoice_auth.einvoice_corp SET btrail = #{btrail}
+        WHERE corpid IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+               #{item}
+        </foreach>
+   </update>
+   
+  <!-- 根据corpname查询Company，返回resultMap -->
+  <select id="findBycorpname" parameterType="String" 
+  	resultMap="companyResultMap">
+  	SELECT corpname FROM report_einvoice_auth.einvoice_corp WHERE corpname=#{corpname};
+  </select>
+  
+  <!-- 查询所有公司并分页显示，返回resultMap -->
+  <select id="findAllSplit" parameterType="java.util.Map" resultType="Company"
+  	resultMap="companyResultMap">
+  	SELECT corpid,corpcode,corpname,contact,corpaddress,corpphone,corpemail,
+  	businesslicense,orgcode,taxid,createtime,corptype,datasource,ts,btrail
+  	FROM report_einvoice_auth.einvoice_corp
+  	<where>
+  	   <if test="column !=null and keyWord !=null">
+  	      ${column} LIKE #{keyWord}
+  	   </if>
+  	</where>
+  	ORDER BY createtime DESC
+  	LIMIT #{start},#{lineSize};
+  </select>
+  
+  <!-- 查询所有公司的记录数，返回Integer -->
+  <select id="getAllCount" parameterType="java.util.Map" resultType="Integer">
+		SELECT COUNT(*) FROM report_einvoice_auth.einvoice_corp
+		<where>
+			<if test="column != null and keyWord != null">
+				${column} LIKE #{keyWord}
+			</if>
+		</where>
+  </select> 
+  
+  <!-- 查询所有未开通权限的公司并分页显示，返回resultMap -->
+  <select id="findAllSplitNoOpen" parameterType="java.util.Map" resultType="Company"
+  	resultMap="companyResultMap">
+  	SELECT corpid,corpcode,corpname,contact,corpaddress,corpphone,corpemail,
+  	businesslicense,orgcode,taxid,createtime,corptype,datasource,ts,btrail 
+  	FROM report_einvoice_auth.einvoice_corp
+  	<where>
+  	   <if test="column !=null and keyWord !=null">
+  	      ${column} LIKE #{keyWord}
+  	   </if>
+  	</where>
+  	ORDER BY createtime DESC
+  	LIMIT #{start},#{lineSize};
+  </select>
+  
+   <!-- 查询所有未开通权限的公司的记录数，返回Integer -->
+  <select id="getAllCountNoOpen" parameterType="java.util.Map" resultType="Integer">
+		SELECT COUNT(*) FROM report_einvoice_auth.einvoice_corp
+		<where>
+			<if test="column != null and keyWord != null">
+				${column} LIKE #{keyWord} AND
+			</if>
+			 <if test="btrail !=null">
+  	           btrail = #{btrail}
+  	        </if>
+		</where>
+	</select> 
+  
+   <!-- 进行公司的权限的变更，返回true -->
+  <update id="doUpdateByCorpid" parameterType="Company" >
+        UPDATE report_einvoice_auth.einvoice_corp SET
+        <if test="btrail != null">
+            btrail=#{btrail}
+        </if>
+        WHERE corpid=#{corpid}
+  </update>
+  
+  <!-- 公司注册，返回true -->
+  <insert id="doCreate" parameterType="Company">
+		INSERT INTO report_einvoice_auth.einvoice_corp (corpid,corpcode,corpname,contact,corpaddress,corpphone,corpemail,businesslicense)
+		VALUES (#{corpid},#{corpcode},#{corpname},#{contact},#{corpaddress},#{corpphone},#{corpemail},
+		#{businesslicense},#{orgcode},#{taxid},#{createtime},#{corptype},#{datasource},#{ts},#{btrail}) ;
+ </insert>
+
+  <!-- 映射Comapny对象的resultMap -->
+	<resultMap type="yonyou.einvoice.backmangesystem.companyManagement.vo.Company" id="companyResultMap">
+		<id property="corpid" column="corpid"/>
+		<result property="corpcode" column="corpcode"/>
+		<result property="corpname" column="corpname"/>
+		<result property="contact" column="contact"/>
+		<result property="corpaddress" column="corpaddress"/>
+		<result property="corpphone" column="corpphone"/>
+		<result property="corpemail" column="corpemail"/>
+		<result property="businesslicense" column="businesslicense"/>
+		<result property="orgcode" column="orgcode"/>
+		<result property="taxid" column="taxid"/>
+		<result property="createtime" column="createtime"/>
+		<result property="corptype" column="corptype"/>
+		<result property="datasource" column="datasource"/>
+		<result property="ts" column="ts"/>
+		<result property="btrail" column="btrail"/>
+	</resultMap>
+
+</mapper>

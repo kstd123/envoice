@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+
+
+    <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>/tmp/logs/electronicInvoice.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <FileNamePattern>electronicInvoice.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="error">
+        <appender-ref ref="dailyRollingFileAppender" />
+    </root>
+
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <logger name="org.springframework.web" level="INFO"/>
+
+    <logger name="yonyou.einvoice.backmangesystem.messagemanage.dao" level="debug"/>
+	
+	<logger name="yonyou.einvoice.backmangesystem.parameterManagement.dao" level="debug"/>
+
+</configuration>

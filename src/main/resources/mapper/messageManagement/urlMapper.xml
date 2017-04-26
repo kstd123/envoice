@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="yonyou.einvoice.backmangesystem.messagemanage.dao.UrlDao">
+
+    <!-- 查询条件-->
+    <sql id="conditions">
+        report_piaoeda_client.msg_url where 1=1
+        <if test=' conditionFpqqlsh != null and conditionFpqqlsh !="" '>
+            and fpqqlsh like "%"#{conditionFpqqlsh}"%"
+        </if>
+        <if test='conditionUrl!=null and conditionUrl!="" '>
+            and url like "%"#{conditionUrl}"%"
+        </if>
+        <if test=' conditionResult!=null and conditionResult!="" '>
+            and result like "%"#{conditionResult}"%"
+        </if>
+        <choose>
+            <when test='conditionResult == "0"'>
+                and result is not null
+            </when>
+            <when test='conditionResult == "1"'>
+                and result is  null
+            </when>
+            <otherwise>
+
+            </otherwise>
+        </choose>
+    </sql>
+
+    <!-- 分页查询（包含条件查询）-->
+    <select id="selectList" resultType="yonyou.einvoice.backmangesystem.messagemanage.entity.CallbackEntity"
+            parameterType="yonyou.einvoice.backmangesystem.messagemanage.util.ConditionUtil">
+        select * from
+        <include refid="conditions"/>
+        limit #{pageNumStart},#{pageNum}
+    </select>
+
+    <!-- 查询数据总条数-->
+    <select id="selectNum" resultType="Integer"
+            parameterType="yonyou.einvoice.backmangesystem.messagemanage.util.ConditionUtil">
+        select count(*) from
+        <include refid="conditions"/>
+    </select>
+
+    <!-- 根据id批量获取要重发的数据
+    <select id="resend"
+            resultType="yonyou.einvoice.backmangesystem.messagemanage.entity.CallbackEntity">
+        select * from report_piaoeda_client.msg_url where id in
+        <foreach item="id" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    -->
+</mapper>

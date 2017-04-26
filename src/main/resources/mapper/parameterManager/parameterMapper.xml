@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="yonyou.einvoice.backmangesystem.parameterManagement.dao.IParameterDao">
+	<select id="SelectByCondition" resultType="yonyou.einvoice.backmangesystem.parameterManagement.entity.ParameterEntity">
+	 select param.*,corp.corpname from report_piaoeda_client.sysparam param,report_einvoice_auth.einvoice_corp corp where param.corpid=corp.corpid
+	 <if test="corpname!=null and corpname!=''">
+	 	and corpname like "%"#{corpname}"%" 
+	 </if>
+	 <if test="name!=null and name!=''">
+	 	and name like "%"#{name}"%" 
+	 </if>
+	 	limit #{pageNumStart},#{pageNum}
+	</select>
+</mapper>
